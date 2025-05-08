@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Trivia Escolar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; text-align: center; margin: 0; padding: 20px; }
+    .container { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    h1 { color: #333; }
+    .question { font-size: 1.2em; margin: 20px 0; }
+    .options button { display: block; width: 100%; margin: 10px 0; padding: 10px; border-radius: 5px; border: none; font-size: 1em; cursor: pointer; transition: background 0.3s; }
+    .correct { background-color: #c8e6c9 !important; }
+    .incorrect { background-color: #ffcdd2 !important; }
+    #nextBtn { margin-top: 20px; padding: 10px 20px; font-size: 1em; border: none; background-color: #1976d2; color: white; border-radius: 5px; cursor: pointer; display: none; }
+    #result { font-size: 1.3em; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container animate__animated animate__fadeIn">
+    <h1>Trivia de Conocimientos Generales</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <button id="nextBtn" onclick="nextQuestion()">Siguiente</button>
+    </div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { q: "¿Cuál es el planeta más grande del sistema solar?", o: ["Tierra", "Júpiter", "Saturno", "Marte"], a: 1 },
+      { q: "¿En qué continente se encuentra Egipto?", o: ["Asia", "Europa", "África", "Oceanía"], a: 2 },
+      { q: "¿Quién escribió 'Don Quijote de la Mancha'?", o: ["Miguel de Cervantes", "Pablo Neruda", "Gabriel García Márquez", "Jorge Luis Borges"], a: 0 },
+      { q: "¿Cuántos lados tiene un hexágono?", o: ["5", "6", "7", "8"], a: 1 },
+      { q: "¿Cuál es el océano más grande del mundo?", o: ["Atlántico", "Índico", "Ártico", "Pacífico"], a: 3 },
+      { q: "¿Cuál es el resultado de 9 x 7?", o: ["63", "56", "72", "49"], a: 0 },
+      { q: "¿Qué gas necesitan las plantas para hacer la fotosíntesis?", o: ["Oxígeno", "Nitrógeno", "Dióxido de carbono", "Hidrógeno"], a: 2 },
+      { q: "¿Cuál es la capital de Francia?", o: ["Madrid", "París", "Roma", "Londres"], a: 1 },
+      { q: "¿Qué instrumento mide los terremotos?", o: ["Termómetro", "Barómetro", "Sismógrafo", "Anemómetro"], a: 2 },
+      { q: "¿Cuántos colores tiene el arcoíris?", o: ["5", "6", "7", "8"], a: 2 }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = questions[current];
+      document.getElementById('question').innerText = q.q;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.o.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.innerText = option;
+        btn.onclick = () => selectOption(btn, index);
+        optionsDiv.appendChild(btn);
+      });
+      document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function selectOption(btn, index) {
+      const buttons = document.querySelectorAll('#options button');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === questions[current].a) b.classList.add('correct');
+        else if (b === btn) b.classList.add('incorrect');
+      });
+      if (index === questions[current].a) score++;
+      document.getElementById('nextBtn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz').style.display = 'none';
+      const resultText = `Obtuviste ${score} de ${questions.length} respuestas correctas.`;
+      let feedback = '';
+      if (score === 10) feedback = '¡Excelente! ¡Lo sabes todo!';
+      else if (score >= 7) feedback = '¡Muy bien! Sigue así.';
+      else if (score >= 4) feedback = 'Bien, pero puedes mejorar.';
+      else feedback = 'Necesitas estudiar más. ¡Ánimo!';
+
+      document.getElementById('result').innerHTML = `<p>${resultText}</p><p>${feedback}</p>`;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
